@@ -1,0 +1,25 @@
+.game {
+    display: flex;
+    flex-direction: row;
+}
+
+.board-row:after {
+    clear: both;
+    content: "";
+    display: table;
+}
+
+.square {
+    width: 40px;
+    height: 40px;
+    border-width: 0px;
+    color: transparent;
+}
+
+.square--even {
+    background-color: rgba(241,241,219,255);
+}
+
+.square--odd {
+    background-color: rgba(145,171,120,255);
+}
