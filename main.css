@@ -1,6 +1,38 @@
+.mainContainer {
+    display: flex;
+    min-height: 100vh;
+    justify-content: center;
+    align-items: center;
+}
+
+.gameContainer {
+    width: 1150px;
+    height: 600px;
+    display: flex;
+}
+
+.container-board {
+    width: 60%;
+    height: 100%;
+}
+
+.container-game {
+    width: 40%;
+    height: 100%;
+}
+
 .game {
     display: flex;
     flex-direction: row;
+}
+
+.container {
+    display: flex;
+}
+
+.container-game {
+    display: flex;
+    flex-direction: column;
 }
 
 .board-row:after {
@@ -10,8 +42,8 @@
 }
 
 .square {
-    width: 40px;
-    height: 40px;
+    width: 70px;
+    height: 70px;
     border-width: 0px;
     color: transparent;
 }
