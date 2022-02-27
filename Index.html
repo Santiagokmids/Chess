@@ -137,8 +137,13 @@
 
         ReactDOM.render(
             <Game />,
-            document.getElementById('cheesGame')
+            document.getElementById('cheesGame'),
+            getRandomInt(0,9)
         );
+
+    function getRandomInt(min, max) {
+        console.log(Math.floor(Math.random() * (max - min) + min));
+    }   
 
     </script>
 <body>
