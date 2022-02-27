@@ -146,16 +146,23 @@
             }
 
             tick(){
-                if (this.state.seconds === 0) {
+                if (this.state.seconds === 0 && this.state.minutes > 0) {
                     this.setState(state => ({
                         seconds: 60,
                         minutes: state.minutes - 1
                     }));
                 }
 
-                this.setState(state => ({
-                    seconds: state.seconds - 1
-                }));
+                if (this.state.minutes === 0 && this.state.seconds === 0) {
+                    this.setState(state => ({
+                        seconds: 0,
+                        minutes: 0
+                    }));
+                }else{
+                        this.setState(state => ({
+                        seconds: state.seconds - 1
+                    }));
+                }
             }
 
             componentDidMount(){
