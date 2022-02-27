@@ -137,59 +137,60 @@
 
     <b>Tiempo restante: </b>
     <div id = "timer"></div>
+    <button id="btn-timer"> Empezar a Jugar</button>
     <script type="text/babel">
         
-        class Timer extends React.Component{
-            constructor(props){
-                super(props);
-                this.state = {minutes : 1, seconds: 0};
-            }
+        const btn = document.querySelector("#btn-timer");
 
-            tick(){
-                if (this.state.seconds === 0 && this.state.minutes > 0) {
-                    this.setState(state => ({
-                        seconds: 60,
-                        minutes: state.minutes - 1
-                    }));
+        btn.addEventListener("click", function(evento){
+            class Timer extends React.Component{
+                constructor(props){
+                    super(props);
+                    this.state = {minutes : 1, seconds: 0};
                 }
 
-                if (this.state.minutes === 0 && this.state.seconds === 0) {
-                    this.setState(state => ({
-                        seconds: 0,
-                        minutes: 0
-                    }));
-                }else{
+                tick(){ 
+                    if (this.state.seconds === 0 && this.state.minutes > 0) {
                         this.setState(state => ({
-                        seconds: state.seconds - 1
-                    }));
+                            seconds: 60,
+                            minutes: state.minutes - 1
+                        }));
+                    }
+
+                    if (this.state.minutes === 0 && this.state.seconds === 0) {
+                        this.setState(state => ({
+                            seconds: 0,
+                            minutes: 0
+                        }));
+                    }else{
+                            this.setState(state => ({
+                            seconds: state.seconds - 1
+                        }));
+                    }
+                }
+                
+                componentDidMount(){
+                    this.interval = setInterval(() => this.tick(),1000);
+                }
+
+                componentWillUnmount(){
+                    clearInterval(this.interval);
+                }
+
+                render(){
+                    return(
+                        <div>
+                            {this.state.minutes} : {this.state.seconds}
+                        </div>
+                    );
                 }
             }
 
-            componentDidMount(){
-                this.interval = setInterval(() => this.tick(),1000);
-            }
-
-            componentWillUnmount(){
-                clearInterval(this.interval);
-            }
-
-            render(){
-                return(
-                    <div>
-                        {this.state.minutes} : {this.state.seconds}
-                    </div>
-                );
-            }
-        }
-
-        ReactDOM.render(
-            <Timer />,
-            document.getElementById('timer')
-        );
-
+            ReactDOM.render(
+                <Timer />,
+                document.getElementById('timer')
+            );
+        });
     </script>
-
-    <button> Empezar a Jugar</button>
-
 </body>
 </html>
