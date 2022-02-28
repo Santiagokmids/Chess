@@ -41,6 +41,16 @@
     background-color: rgba(145,171,120,255);
 }
 
+#btn-timer {
+    color: white;
+    border-width: 0px;
+    background-color: rgba(127,166,80,255);
+    width: 120px;
+    height: 40px;
+    font-family: 'Arial';
+    font-weight: 800;
+}
+
 #h1, #h3, #h5, #h7, #g8, #e8, #c8, #a8 {
     color: rgba(145,171,120,255);
 }
