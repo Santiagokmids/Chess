@@ -11,21 +11,110 @@
     <section class="mainContainer">
         <section class="gameContainer">
             <div class="container-board">
+               
                 <div id="cheesGame"></div>
+                
                 <script type="text/babel">
-    
+                    
+                    function randoms(){
+                        var number = Math.floor(Math.random() * (9 - 1) + 1);
+                        var letter = String.fromCharCode(Math.floor(Math.random() * (105 - 97) + 97));
+                        return letter + number;
+                    }
+
                     class Game extends React.Component {
+                        constructor(props){
+                            super(props);
+                            this.state = {
+                                isStart : false,
+                            };
+                        }
+
+                        startGame(){
+                            this.setState({
+                                isStart : true,
+                            }); 
+
+                            class Timer extends React.Component{
+                                constructor(props){
+                                    super(props);
+                                    this.state = {minutes : 1, seconds: 0};
+                                }
+
+                                tick(){ 
+                                    if (this.state.seconds === 0 && this.state.minutes > 0) {
+                                        this.setState(state => ({
+                                            seconds: 60,
+                                            minutes: state.minutes - 1
+                                        }));
+                                    }
+
+                                    if (this.state.minutes === 0 && this.state.seconds === 0) {
+                                        this.setState(state => ({
+                                            seconds: 0,
+                                            minutes: 0
+                                        }));
+                                    }else{
+                                            this.setState(state => ({
+                                            seconds: state.seconds - 1
+                                        }));
+                                    }
+                                }
+                                
+                                componentDidMount(){
+                                    this.interval = setInterval(() => this.tick(),1000);
+                                }
+
+                                componentWillUnmount(){
+                                    clearInterval(this.interval);
+                                }
+
+                                render(){
+                                    return(
+                                        <div>
+                                            {this.state.minutes} : {this.state.seconds}
+                                        </div>
+                                    );
+                                }
+                            }
+                            ReactDOM.render(
+                                <Timer />,
+                                document.getElementById('timer'),
+                            );
+                        }
+
                         render() {
+                            const identifier = this.state.isStart;
+                            const values = randoms();
+                            let mixed; 
+
+                            if (identifier) {
+                                mixed = values;
+                                
+                            }else{
+                                mixed = '';
+                            }
+
                             return (
                                 <div className="game">
                                     <div className="game-board">
                                      <Board />
                                     </div>
+                                    <div className="game-info">
+                                        <b>Tiempo restante: </b>
+                                        <div id="timer">
+                                            {this.state.minutes} : {this.state.seconds}  
+                                        </div>
+                                        <div>
+                                            <button id = "btn-timer" onClick={() => this.startGame()}> Empezar a Jugar </button>
+                                            {mixed}
+                                        </div>
+                                    </div>
                                 </div>
                             );
                         }
                     }
-            
+
                     class Board extends React.Component {
                         renderSquare(i,identifier) {
                             return (
@@ -120,6 +209,7 @@
                                     {this.renderSquare(0, "a8")}
                                     </div>
                                 </div>
+                               
                             );
                         }
                     }
@@ -156,73 +246,8 @@
                     ReactDOM.render(
                         <Game />,
                         document.getElementById('cheesGame'),
-                        getRandomInt(0,9)
                     );
-
-                    function getRandomInt(min, max) {
-                        console.log(Math.floor(Math.random() * (max - min) + min));
-                    }   
-
-                </script>
-                
-            </div>
-            <div id="container-game">
-                <b>Tiempo restante: </b>
-                <div id = "timer"></div>
-                <button id="btn-timer"> Empezar a Jugar</button>
-                <script type="text/babel">
-                    
-                    const btn = document.querySelector("#btn-timer");
-
-                    btn.addEventListener("click", function(evento){
-                        class Timer extends React.Component{
-                            constructor(props){
-                                super(props);
-                                this.state = {minutes : 1, seconds: 0};
-                            }
-
-                            tick(){ 
-                                if (this.state.seconds === 0 && this.state.minutes > 0) {
-                                    this.setState(state => ({
-                                        seconds: 60,
-                                        minutes: state.minutes - 1
-                                    }));
-                                }
-
-                                if (this.state.minutes === 0 && this.state.seconds === 0) {
-                                    this.setState(state => ({
-                                        seconds: 0,
-                                        minutes: 0
-                                    }));
-                                }else{
-                                        this.setState(state => ({
-                                        seconds: state.seconds - 1
-                                    }));
-                                }
-                            }
-                            
-                            componentDidMount(){
-                                this.interval = setInterval(() => this.tick(),1000);
-                            }
-
-                            componentWillUnmount(){
-                                clearInterval(this.interval);
-                            }
-
-                            render(){
-                                return(
-                                    <div>
-                                        {this.state.minutes} : {this.state.seconds}
-                                    </div>
-                                );
-                            }
-                        }
-
-                        ReactDOM.render(
-                            <Timer />,
-                            document.getElementById('timer')
-                        );
-                    });
+                   
                 </script>
             </div>
         </section>
