@@ -125,17 +125,30 @@
                     }
             
                     function Square(props) {
-                        
+
+                        var splitSquare = props.id.split("");
+                        var letter = "h";
+                        var number = "8";
+                        var value = props.id;
+
+                        if(props.id === "h8") {
+                            value = props.id;
+                        }else if(splitSquare[0] === letter) {
+                            value = splitSquare[1];
+                        }else if(splitSquare[1] === number) {
+                            value = splitSquare[0];
+                        }
+
                         if(props.value % 2 === 0) {
                             return (
-                                <button id={props.value} className="square square--even" onClick={props.onClick}>
-                                    {props.value}
+                                <button id={props.id} className="square square--even" onClick={props.onClick}>
+                                    {value}
                                 </button>
                             );
                         }
                         return (
-                            <button id={props.value} className="square square--odd" onClick={props.onClick}>
-                                {props.value}
+                            <button id={props.id} className="square square--odd" onClick={props.onClick}>
+                                {value}
                             </button>
                         );
                     }
