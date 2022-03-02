@@ -25,102 +25,110 @@
                     class Game extends React.Component {
                         constructor(props){
                             super(props);
+                            this.continue = false;
                             this.state = {
                                 isStart : false,
+                                minutes: 1,
+                                seconds: 0,
+                                x: randoms(),
                             };
                         }
 
-                        startGame(){
+                        handleClick(i, mixed) {
+
                             this.setState({
-                                isStart : true,
-                            }); 
+                                continue: true,
+                            });
 
-                            class Timer extends React.Component{
-                                constructor(props){
-                                    super(props);
-                                    this.state = {minutes : 1, seconds: 0};
-                                }
-
-                                tick(){ 
-                                    if (this.state.seconds === 0 && this.state.minutes > 0) {
-                                        this.setState(state => ({
-                                            seconds: 60,
-                                            minutes: state.minutes - 1
-                                        }));
-                                    }
-
-                                    if (this.state.minutes === 0 && this.state.seconds === 0) {
-                                        this.setState(state => ({
-                                            seconds: 0,
-                                            minutes: 0
-                                        }));
-                                    }else{
-                                            this.setState(state => ({
-                                            seconds: state.seconds - 1
-                                        }));
-                                    }
-                                }
-                                
-                                componentDidMount(){
-                                    this.interval = setInterval(() => this.tick(),1000);
-                                }
-
-                                componentWillUnmount(){
-                                    clearInterval(this.interval);
-                                }
-
-                                render(){
-                                    return(
-                                        <div>
-                                            {this.state.minutes} : {this.state.seconds}
-                                        </div>
-                                    );
-                                }
+                            if(i === mixed){
+                                console.log(i, mixed);
                             }
-                            ReactDOM.render(
-                                <Timer />,
-                                document.getElementById('timer'),
-                            );
+                        }
+
+                        tick(){ 
+                            if (this.state.seconds === 0 && this.state.minutes > 0 && this.state.isStart) {
+                                this.setState(state => ({
+                                    seconds: 60,
+                                    minutes: state.minutes - 1
+                                }));
+                            }
+
+                            if (this.state.minutes === 0 && this.state.seconds === 0 && this.state.isStart) {
+                                this.setState(state => ({
+                                    seconds: 0,
+                                    minutes: 0
+                                }));
+                            }else if (this.state.isStart){
+                                this.setState(state => ({
+                                    seconds: state.seconds - 1
+                                }));
+                            }
+                        }
+                                        
+                        componentDidMount(){
+                            this.interval = setInterval(() => this.tick(),1000);
+                        }
+
+                        componentWillUnmount(){
+                            clearInterval(this.interval);
+                        }
+
+                        startGame(){
+                            this.continue = (this.continue ? false : true);
+                            this.setState({
+                                isStart: true,
+                                minutes: 1,
+                                seconds: 0,
+                            });
                         }
 
                         render() {
                             const identifier = this.state.isStart;
-                            const values = randoms();
+                            const indentifyContinue = this.continue;
+                            const values = this.continue ? this.state.x = randoms() : this.state.x;
+                            
                             let mixed; 
 
-                            if (identifier) {
+                            if (identifier && indentifyContinue) {
                                 mixed = values;
-                                
-                            }else{
-                                mixed = '';
+                                this.continue = false;
+                            }else if (identifier){
+                                mixed = this.state.x;
                             }
 
                             return (
                                 <div className="game">
                                     <div className="game-board">
-                                     <Board />
+                                     <Board 
+                                        onClick={(i) => this.handleClick(i, mixed)}
+                                     />
                                     </div>
                                     <div className="game-info">
                                         <b>Tiempo restante: </b>
-                                        <div id="timer">
-                                            {this.state.minutes} : {this.state.seconds}  
+                                        <div>
+                                            {this.state.minutes} : {this.state.seconds}
                                         </div>
                                         <div>
                                             <button id = "btn-timer" onClick={() => this.startGame()}> Empezar a Jugar </button>
-                                            {mixed}
+                                        </div>
+                                        <br />
+                                        <div>
+                                            {mixed}    
                                         </div>
                                     </div>
                                 </div>
                             );
                         }
                     }
+                    
 
                     class Board extends React.Component {
-                        renderSquare(i,identifier) {
+                        renderSquare(color,identifier) {
                             return (
                                 <Square 
-                                    value={i}
+                                    value={color}
                                     id={identifier}
+                                    onClick={() => this.props.onClick(identifier)}
                                 />
                             );
                         }
@@ -247,7 +255,6 @@
                         <Game />,
                         document.getElementById('cheesGame'),
                     );
-                   
                 </script>
             </div>
         </section>
