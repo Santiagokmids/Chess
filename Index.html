@@ -26,7 +26,11 @@
                         constructor(props){
                             super(props);
                             this.continue = false;
+                            this.isCheck = false;
                             this.state = {
+                                history: [{
+                                    squares: Array(64).fill(null)
+                                }],
                                 isStart : false,
                                 minutes: 1,
                                 seconds: 0,
@@ -35,14 +39,21 @@
                         }
 
                         handleClick(i, mixed) {
+                            const history = this.state.history;
+                            const current = history[history.length - 1];
+                            const squares = current.squares.slice();
 
                             this.setState({
                                 continue: true,
+                                history: history.concat([{
+                                    squares: squares
+                                }]),
                             });
 
                             if(i === mixed){
-                                console.log(i, mixed);
+                                this.isCheck = true;
                             }
+                            
                         }
 
                         tick(){ 
@@ -85,7 +96,9 @@
                         render() {
                             const identifier = this.state.isStart;
                             const indentifyContinue = this.continue;
+                            const history = this.state.history;
                             const values = this.continue ? this.state.x = randoms() : this.state.x;
+                            const booleanCheck = this.isCheck;
                             
                             let mixed; 
 
@@ -95,6 +108,19 @@
                             }else if (identifier){
                                 mixed = this.state.x;
                             }
+
+                            const checks = history.map((step, move) =>{
+                                if (booleanCheck) {
+                                    this.isCheck = false;
+                                    var time = 60 - this.state.seconds;
+                                    return (
+                                        <li key={move}>
+                                            <p> Casilla: {mixed}   Tiempo: {time}</p>
+                                        </li>
+                                    );
+                                }
+                                return ;
+                            });
 
                             return (
                                 <div className="game">
@@ -113,8 +139,11 @@
                                         </div>
                                         <br />
                                         <div>
-                                            {mixed}    
+                                            {mixed}
                                         </div>
+                                        <ol>
+                                            {checks}    
+                                        </ol>
                                     </div>
                                 </div>
                             );
