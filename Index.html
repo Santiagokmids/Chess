@@ -15,7 +15,15 @@
                 <div id="cheesGame"></div>
                 
                 <script type="text/babel">
-                    
+
+                    var isStart = false;
+                    var isContinue = false;
+                    var x = "";
+                    var totalTime = 0;
+                    var time = 0;
+                    var score = 0;
+                    var finalScore;
+
                     function randoms(){
                         var number = Math.floor(Math.random() * (9 - 1) + 1);
                         var letter = String.fromCharCode(Math.floor(Math.random() * (105 - 97) + 97));
@@ -25,131 +33,80 @@
                     class Game extends React.Component {
                         constructor(props){
                             super(props);
-                            this.continue = false;
-                            this.isCheck = false;
-                            this.state = {
-                                history: [{
-                                    squares: Array(64).fill(null)
-                                }],
-                                isStart : false,
-                                minutes: 1,
-                                seconds: 0,
-                                x: randoms(),
+                            this.state = { items: [], text: '' };
+                        }
+
+                        handleClick(i) {
+
+                            time = totalTime;
+                            totalTime = 0;
+                            var img = 'img/equis.png';
+
+                            if(x === i){
+                                img = 'img/chulo.png';
+                                score++;
+                            }
+
+                            const newItem = {
+                                text: this.state.text,
+                                time: time,
+                                square: x,
+                                src: img,
+                                id: Date.now()
                             };
-                        }
 
-                        handleClick(i, mixed) {
-                            const history = this.state.history;
-                            const current = history[history.length - 1];
-                            const squares = current.squares.slice();
+                            this.setState(state => ({
+                                items: state.items.concat(newItem),
+                                text: ''
+                            }));
 
-                            this.setState({
-                                continue: true,
-                                history: history.concat([{
-                                    squares: squares
-                                }]),
-                            });
-
-                            if(i === mixed){
-                                this.isCheck = true;
-                            }
-                            
-                        }
-
-                        tick(){ 
-                            if (this.state.seconds === 0 && this.state.minutes > 0 && this.state.isStart) {
-                                this.setState(state => ({
-                                    seconds: 60,
-                                    minutes: state.minutes - 1
-                                }));
-                            }
-
-                            if (this.state.minutes === 0 && this.state.seconds === 0 && this.state.isStart) {
-                                this.setState(state => ({
-                                    seconds: 0,
-                                    minutes: 0
-                                }));
-                            }else if (this.state.isStart){
-                                this.setState(state => ({
-                                    seconds: state.seconds - 1
-                                }));
-                            }
-                        }
-                                        
-                        componentDidMount(){
-                            this.interval = setInterval(() => this.tick(),1000);
-                        }
-
-                        componentWillUnmount(){
-                            clearInterval(this.interval);
+                            x = randoms();
                         }
 
                         startGame(){
-                            this.continue = (this.continue ? false : true);
-                            this.setState({
-                                isStart: true,
-                                minutes: 1,
-                                seconds: 0,
-                            });
+                            isContinue = (isContinue ? false : true);
+                            isStart = true;
+                            x = randoms();
                         }
 
                         render() {
-                            const identifier = this.state.isStart;
-                            const indentifyContinue = this.continue;
-                            const history = this.state.history;
-                            const values = this.continue ? this.state.x = randoms() : this.state.x;
-                            const booleanCheck = this.isCheck;
-                            
-                            let mixed; 
-
-                            if (identifier && indentifyContinue) {
-                                mixed = values;
-                                this.continue = false;
-                            }else if (identifier){
-                                mixed = this.state.x;
-                            }
-
-                            const checks = history.map((step, move) =>{
-                                if (booleanCheck) {
-                                    this.isCheck = false;
-                                    var time = 60 - this.state.seconds;
-                                    return (
-                                        <li key={move}>
-                                            <p> Casilla: {mixed}   Tiempo: {time}</p>
-                                        </li>
-                                    );
-                                }
-                                return ;
-                            });
-
                             return (
                                 <div className="game">
                                     <div className="game-board">
                                      <Board 
-                                        onClick={(i) => this.handleClick(i, mixed)}
+                                        onClick={(i) => this.handleClick(i)}
                                      />
                                     </div>
                                     <div className="game-info">
-                                        <b>Tiempo restante: </b>
-                                        <div>
-                                            {this.state.minutes} : {this.state.seconds}
-                                        </div>
+                                        <br />
                                         <div>
                                             <button id = "btn-timer" onClick={() => this.startGame()}> Empezar a Jugar </button>
                                         </div>
                                         <br />
                                         <div>
-                                            {mixed}
+                                            <Timer />
                                         </div>
-                                        <ol>
-                                            {checks}    
-                                        </ol>
+                                        <div className="todoList">
+                                            <TodoList items={this.state.items}/>
+                                        </div>
                                     </div>
                                 </div>
                             );
                         }
                     }
-                    
+
+                    class TodoList extends React.Component {
+                        render() {
+                            
+                            return(
+                                <ul>
+                                    {this.props.items.map(item => (
+                                        <li key={item.id}>Casilla: {item.square} Tiempo: {item.time} <img id="img" src={item.src}/></li>
+                                    ))}
+                                </ul>
+                            );
+                        }
+                    }
 
                     class Board extends React.Component {
                         renderSquare(color,identifier) {
@@ -246,7 +203,61 @@
                                     {this.renderSquare(0, "a8")}
                                     </div>
                                 </div>
-                               
+                            );
+                        }
+                    }
+
+                    class Timer extends React.Component {
+                        constructor(props){
+                            super(props);
+                            this.state = {
+                                minutes: 1,
+                                seconds: 0,
+                            };
+                        }
+
+                        tick(){ 
+                            if (this.state.seconds === 0 && this.state.minutes > 0 && isStart) {
+                                this.setState(state => ({
+                                    seconds: 60,
+                                    minutes: state.minutes - 1
+                                }));
+                            }
+
+                            if (this.state.minutes === 0 && this.state.seconds === 0 && isStart) {
+                                finalScore = score;
+                                this.setState(state => ({
+                                    seconds: 0,
+                                    minutes: 0
+                                }));
+                            }else if(isStart){
+                                this.setState(state => ({
+                                    seconds: state.seconds - 1
+                                }));
+                            }
+
+                            totalTime++;
+                        }
+                                        
+                        componentDidMount(){
+                            this.interval = setInterval(() => this.tick(),1000);
+                        }
+
+                        componentWillUnmount(){
+                            clearInterval(this.interval);
+                        }
+
+                        render () {
+                            return (
+                                <div>
+                                    <b>Tiempo restante: </b> {this.state.minutes} : {this.state.seconds}   
+                                    <div>
+                                        <b>Casilla: </b> {x}
+                                    </div>
+                                    <div>
+                                        <b>Puntaje: </b> {finalScore}    
+                                    </div>
+                                </div>
                             );
                         }
                     }
